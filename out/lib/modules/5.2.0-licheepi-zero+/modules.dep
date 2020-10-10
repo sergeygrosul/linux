@@ -1,0 +1,37 @@
+kernel/drivers/video/backlight/lcd.ko:
+kernel/drivers/net/ethernet/davicom/dm9000.ko:
+kernel/drivers/net/wireless/rtl8188fu/rtl8188fu.ko: kernel/net/wireless/cfg80211.ko
+kernel/drivers/usb/common/usb-otg-fsm.ko:
+kernel/drivers/usb/class/cdc-wdm.ko:
+kernel/drivers/usb/serial/usbserial.ko:
+kernel/drivers/usb/serial/cp210x.ko: kernel/drivers/usb/serial/usbserial.ko
+kernel/drivers/usb/serial/usb-serial-simple.ko: kernel/drivers/usb/serial/usbserial.ko
+kernel/drivers/input/mousedev.ko:
+kernel/drivers/media/i2c/msp3400.ko:
+kernel/drivers/media/i2c/saa7115.ko:
+kernel/drivers/media/i2c/tvp5150.ko: kernel/drivers/media/v4l2-core/v4l2-fwnode.ko
+kernel/drivers/media/i2c/ov2640.ko:
+kernel/drivers/media/i2c/mt9v011.ko:
+kernel/drivers/media/v4l2-core/v4l2-fwnode.ko:
+kernel/drivers/media/v4l2-core/tuner.ko:
+kernel/drivers/media/common/videobuf2/videobuf2-common.ko:
+kernel/drivers/media/common/videobuf2/videobuf2-v4l2.ko: kernel/drivers/media/common/videobuf2/videobuf2-common.ko
+kernel/drivers/media/common/videobuf2/videobuf2-memops.ko:
+kernel/drivers/media/common/videobuf2/videobuf2-vmalloc.ko: kernel/drivers/media/common/videobuf2/videobuf2-memops.ko
+kernel/drivers/media/common/videobuf2/videobuf2-dma-contig.ko: kernel/drivers/media/common/videobuf2/videobuf2-memops.ko
+kernel/drivers/media/common/tveeprom.ko:
+kernel/drivers/media/platform/video-mux.ko: kernel/drivers/mux/mux-core.ko kernel/drivers/media/v4l2-core/v4l2-fwnode.ko
+kernel/drivers/media/platform/sunxi/sun6i-csi/sun6i-csi.ko: kernel/drivers/media/common/videobuf2/videobuf2-dma-contig.ko kernel/drivers/media/common/videobuf2/videobuf2-memops.ko kernel/drivers/media/common/videobuf2/videobuf2-v4l2.ko kernel/drivers/media/common/videobuf2/videobuf2-common.ko kernel/drivers/media/v4l2-core/v4l2-fwnode.ko
+kernel/drivers/media/usb/uvc/uvcvideo.ko: kernel/drivers/media/common/videobuf2/videobuf2-vmalloc.ko kernel/drivers/media/common/videobuf2/videobuf2-memops.ko kernel/drivers/media/common/videobuf2/videobuf2-v4l2.ko kernel/drivers/media/common/videobuf2/videobuf2-common.ko
+kernel/drivers/media/usb/gspca/gspca_main.ko: kernel/drivers/media/common/videobuf2/videobuf2-vmalloc.ko kernel/drivers/media/common/videobuf2/videobuf2-memops.ko kernel/drivers/media/common/videobuf2/videobuf2-v4l2.ko kernel/drivers/media/common/videobuf2/videobuf2-common.ko
+kernel/drivers/media/usb/em28xx/em28xx.ko: kernel/drivers/media/common/tveeprom.ko
+kernel/drivers/media/usb/em28xx/em28xx-v4l.ko: kernel/drivers/media/usb/em28xx/em28xx.ko kernel/drivers/media/common/tveeprom.ko kernel/drivers/media/common/videobuf2/videobuf2-vmalloc.ko kernel/drivers/media/common/videobuf2/videobuf2-memops.ko kernel/drivers/media/common/videobuf2/videobuf2-v4l2.ko kernel/drivers/media/common/videobuf2/videobuf2-common.ko
+kernel/drivers/mux/mux-core.ko:
+kernel/sound/soc/codecs/snd-soc-fm1288.ko:
+kernel/net/ipv4/udp_diag.ko:
+kernel/net/ipv4/tcp_bic.ko:
+kernel/net/ipv4/tcp_westwood.ko:
+kernel/net/ipv4/tcp_htcp.ko:
+kernel/net/wireless/cfg80211.ko:
+kernel/net/mac80211/mac80211.ko: kernel/lib/crypto/libarc4.ko kernel/net/wireless/cfg80211.ko
+kernel/lib/crypto/libarc4.ko:
