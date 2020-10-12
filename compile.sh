@@ -1,4 +1,4 @@
-#make clean
+make clean
 make ARCH=arm licheepi_zero_defconfig
 #make ARCH=arm menuconfig #add bluethooth, etc.
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j16

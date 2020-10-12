@@ -343,6 +343,8 @@
 				       "PD12", "PD13", "PD15", "PD16", "PD17";
 				function = "emac";
 				drive-strength = <40>;
+				allwinner,drive = <0x03>;
+				allwinner,pull = <0>;
 			};
 
 			i2c0_pins: i2c0-pins {

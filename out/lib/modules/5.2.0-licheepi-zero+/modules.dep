@@ -1,6 +1,18 @@
 kernel/drivers/video/backlight/lcd.ko:
-kernel/drivers/net/ethernet/davicom/dm9000.ko:
+kernel/drivers/net/phy/phylink.ko:
+kernel/drivers/net/phy/mdio-bcm-unimac.ko:
+kernel/drivers/net/phy/mdio-mux.ko:
+kernel/drivers/net/phy/mdio-mux-multiplexer.ko: kernel/drivers/mux/mux-core.ko kernel/drivers/net/phy/mdio-mux.ko
+kernel/drivers/net/phy/mdio-sun4i.ko:
+kernel/drivers/net/ethernet/allwinner/sun4i-emac.ko:
+kernel/drivers/net/ethernet/stmicro/stmmac/stmmac.ko: kernel/drivers/net/phy/phylink.ko
+kernel/drivers/net/ethernet/stmicro/stmmac/stmmac-platform.ko: kernel/drivers/net/ethernet/stmicro/stmmac/stmmac.ko kernel/drivers/net/phy/phylink.ko
+kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.ko: kernel/drivers/net/ethernet/stmicro/stmmac/stmmac-platform.ko kernel/drivers/net/ethernet/stmicro/stmmac/stmmac.ko kernel/drivers/net/phy/phylink.ko
+kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.ko: kernel/drivers/net/ethernet/stmicro/stmmac/stmmac-platform.ko kernel/drivers/net/ethernet/stmicro/stmmac/stmmac.ko kernel/drivers/net/phy/phylink.ko kernel/drivers/net/phy/mdio-mux.ko
+kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.ko: kernel/drivers/net/ethernet/stmicro/stmmac/stmmac-platform.ko kernel/drivers/net/ethernet/stmicro/stmmac/stmmac.ko kernel/drivers/net/phy/phylink.ko
+kernel/drivers/net/ethernet/davicom/dm9000.ko: kernel/drivers/net/mii.ko
 kernel/drivers/net/wireless/rtl8188fu/rtl8188fu.ko: kernel/net/wireless/cfg80211.ko
+kernel/drivers/net/mii.ko:
 kernel/drivers/usb/common/usb-otg-fsm.ko:
 kernel/drivers/usb/class/cdc-wdm.ko:
 kernel/drivers/usb/serial/usbserial.ko:
@@ -20,7 +32,7 @@ kernel/drivers/media/common/videobuf2/videobuf2-memops.ko:
 kernel/drivers/media/common/videobuf2/videobuf2-vmalloc.ko: kernel/drivers/media/common/videobuf2/videobuf2-memops.ko
 kernel/drivers/media/common/videobuf2/videobuf2-dma-contig.ko: kernel/drivers/media/common/videobuf2/videobuf2-memops.ko
 kernel/drivers/media/common/tveeprom.ko:
-kernel/drivers/media/platform/video-mux.ko: kernel/drivers/mux/mux-core.ko kernel/drivers/media/v4l2-core/v4l2-fwnode.ko
+kernel/drivers/media/platform/video-mux.ko: kernel/drivers/media/v4l2-core/v4l2-fwnode.ko kernel/drivers/mux/mux-core.ko
 kernel/drivers/media/platform/sunxi/sun6i-csi/sun6i-csi.ko: kernel/drivers/media/common/videobuf2/videobuf2-dma-contig.ko kernel/drivers/media/common/videobuf2/videobuf2-memops.ko kernel/drivers/media/common/videobuf2/videobuf2-v4l2.ko kernel/drivers/media/common/videobuf2/videobuf2-common.ko kernel/drivers/media/v4l2-core/v4l2-fwnode.ko
 kernel/drivers/media/usb/uvc/uvcvideo.ko: kernel/drivers/media/common/videobuf2/videobuf2-vmalloc.ko kernel/drivers/media/common/videobuf2/videobuf2-memops.ko kernel/drivers/media/common/videobuf2/videobuf2-v4l2.ko kernel/drivers/media/common/videobuf2/videobuf2-common.ko
 kernel/drivers/media/usb/gspca/gspca_main.ko: kernel/drivers/media/common/videobuf2/videobuf2-vmalloc.ko kernel/drivers/media/common/videobuf2/videobuf2-memops.ko kernel/drivers/media/common/videobuf2/videobuf2-v4l2.ko kernel/drivers/media/common/videobuf2/videobuf2-common.ko

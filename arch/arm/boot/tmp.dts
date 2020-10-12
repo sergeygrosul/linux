@@ -1,0 +1,443 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <0x01>;
+	#size-cells = <0x01>;
+	interrupt-parent = <0x01>;
+	model = "Lichee Pi Zero";
+	compatible = "licheepi,licheepi-zero\0allwinner,sun8i-v3s";
+
+	cpus {
+		#address-cells = <0x01>;
+		#size-cells = <0x00>;
+
+		cpu@0 {
+			compatible = "arm,cortex-a7";
+			device_type = "cpu";
+			reg = <0x00>;
+			clocks = <0x02 0x0e>;
+		};
+	};
+
+	timer {
+		compatible = "arm,armv7-timer";
+		interrupts = <0x01 0x0d 0xf08 0x01 0x0e 0xf08 0x01 0x0b 0xf08 0x01 0x0a 0xf08>;
+	};
+
+	clocks {
+		#address-cells = <0x01>;
+		#size-cells = <0x01>;
+		ranges;
+
+		osc24M_clk {
+			#clock-cells = <0x00>;
+			compatible = "fixed-clock";
+			clock-frequency = <0x16e3600>;
+			clock-output-names = "osc24M";
+			linux,phandle = <0x07>;
+			phandle = <0x07>;
+		};
+
+		osc32k_clk {
+			#clock-cells = <0x00>;
+			compatible = "fixed-clock";
+			clock-frequency = <0x8000>;
+			clock-output-names = "osc32k";
+			linux,phandle = <0x08>;
+			phandle = <0x08>;
+		};
+	};
+
+	soc {
+		compatible = "simple-bus";
+		#address-cells = <0x01>;
+		#size-cells = <0x01>;
+		ranges;
+
+		syscon@1c00000 {
+			compatible = "allwinner,sun8i-h3-system-controller\0syscon";
+			reg = <0x1c00000 0x1000>;
+			linux,phandle = <0x0b>;
+			phandle = <0x0b>;
+		};
+
+		mmc@01c0f000 {
+			compatible = "allwinner,sun7i-a20-mmc";
+			reg = <0x1c0f000 0x1000>;
+			clocks = <0x02 0x16 0x02 0x2d 0x02 0x2f 0x02 0x2e>;
+			clock-names = "ahb\0mmc\0output\0sample";
+			resets = <0x02 0x07>;
+			reset-names = "ahb";
+			interrupts = <0x00 0x3c 0x04>;
+			status = "okay";
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+			pinctrl-0 = <0x03>;
+			pinctrl-names = "default";
+			broken-cd;
+			bus-width = <0x04>;
+			vmmc-supply = <0x04>;
+		};
+
+		mmc@01c10000 {
+			compatible = "allwinner,sun7i-a20-mmc";
+			reg = <0x1c10000 0x1000>;
+			clocks = <0x02 0x17 0x02 0x30 0x02 0x32 0x02 0x31>;
+			clock-names = "ahb\0mmc\0output\0sample";
+			resets = <0x02 0x08>;
+			reset-names = "ahb";
+			interrupts = <0x00 0x3d 0x04>;
+			status = "disabled";
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+		};
+
+		mmc@01c11000 {
+			compatible = "allwinner,sun7i-a20-mmc";
+			reg = <0x1c11000 0x1000>;
+			clocks = <0x02 0x18 0x02 0x33 0x02 0x35 0x02 0x34>;
+			clock-names = "ahb\0mmc\0output\0sample";
+			resets = <0x02 0x09>;
+			reset-names = "ahb";
+			interrupts = <0x00 0x3e 0x04>;
+			status = "disabled";
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+		};
+
+		usb@01c19000 {
+			compatible = "allwinner,sun8i-h3-musb";
+			reg = <0x1c19000 0x400>;
+			clocks = <0x02 0x1d>;
+			resets = <0x02 0x11>;
+			interrupts = <0x00 0x47 0x04>;
+			interrupt-names = "mc";
+			phys = <0x05 0x00>;
+			phy-names = "usb";
+			extcon = <0x05 0x00>;
+			status = "okay";
+			dr_mode = "otg";
+		};
+
+		phy@01c19400 {
+			compatible = "allwinner,sun8i-v3s-usb-phy";
+			reg = <0x1c19400 0x2c 0x1c1a800 0x04>;
+			reg-names = "phy_ctrl\0pmu0";
+			clocks = <0x02 0x38>;
+			clock-names = "usb0_phy";
+			resets = <0x02 0x00>;
+			reset-names = "usb0_reset";
+			status = "okay";
+			#phy-cells = <0x01>;
+			usb0_id_det-gpio = <0x06 0x05 0x06 0x00>;
+			linux,phandle = <0x05>;
+			phandle = <0x05>;
+		};
+
+		clock@01c20000 {
+			compatible = "allwinner,sun8i-v3s-ccu";
+			reg = <0x1c20000 0x400>;
+			clocks = <0x07 0x08>;
+			clock-names = "hosc\0losc";
+			#clock-cells = <0x01>;
+			#reset-cells = <0x01>;
+			linux,phandle = <0x02>;
+			phandle = <0x02>;
+		};
+
+		rtc@01c20400 {
+			compatible = "allwinner,sun6i-a31-rtc";
+			reg = <0x1c20400 0x54>;
+			interrupts = <0x00 0x28 0x04 0x00 0x29 0x04>;
+		};
+
+		pinctrl@01c20800 {
+			compatible = "allwinner,sun8i-v3s-pinctrl";
+			reg = <0x1c20800 0x400>;
+			interrupts = <0x00 0x0f 0x04 0x00 0x11 0x04>;
+			clocks = <0x02 0x25 0x07 0x08>;
+			clock-names = "apb\0hosc\0losc";
+			gpio-controller;
+			#gpio-cells = <0x03>;
+			interrupt-controller;
+			#interrupt-cells = <0x03>;
+			linux,phandle = <0x06>;
+			phandle = <0x06>;
+
+			emac0@0 {
+				allwinner,pins = "PD0\0PD1\0PD2\0PD3\0PD4\0PD5\0PD7\0PD8\0PD9\0PD10\0PD12\0PD13\0PD15\0PD16\0PD17";
+				allwinner,function = "emac";
+				allwinner,drive = <0x03>;
+				allwinner,pull = <0x00>;
+			};
+
+			i2c0 {
+				pins = "PB6\0PB7";
+				function = "i2c0";
+				linux,phandle = <0x0a>;
+				phandle = <0x0a>;
+			};
+
+			uart0@0 {
+				pins = "PB8\0PB9";
+				function = "uart0";
+				linux,phandle = <0x09>;
+				phandle = <0x09>;
+			};
+
+			mmc0@0 {
+				pins = "PF0\0PF1\0PF2\0PF3\0PF4\0PF5";
+				function = "mmc0";
+				drive-strength = <0x1e>;
+				bias-pull-up;
+				linux,phandle = <0x03>;
+				phandle = <0x03>;
+			};
+
+			ahci_pwr_pin@0 {
+				pins = "PB8";
+				function = "gpio_out";
+				linux,phandle = <0x0d>;
+				phandle = <0x0d>;
+			};
+
+			usb0_vbus_pin@0 {
+				pins = "PB9";
+				function = "gpio_out";
+				linux,phandle = <0x0e>;
+				phandle = <0x0e>;
+			};
+
+			usb1_vbus_pin@0 {
+				pins = "PH6";
+				function = "gpio_out";
+				linux,phandle = <0x0f>;
+				phandle = <0x0f>;
+			};
+
+			usb2_vbus_pin@0 {
+				pins = "PH3";
+				function = "gpio_out";
+				linux,phandle = <0x10>;
+				phandle = <0x10>;
+			};
+		};
+
+		timer@01c20c00 {
+			compatible = "allwinner,sun4i-a10-timer";
+			reg = <0x1c20c00 0xa0>;
+			interrupts = <0x00 0x12 0x04 0x00 0x13 0x04>;
+			clocks = <0x07>;
+		};
+
+		watchdog@01c20ca0 {
+			compatible = "allwinner,sun6i-a31-wdt";
+			reg = <0x1c20ca0 0x20>;
+			interrupts = <0x00 0x19 0x04>;
+		};
+
+		serial@01c28000 {
+			compatible = "snps,dw-apb-uart";
+			reg = <0x1c28000 0x400>;
+			interrupts = <0x00 0x00 0x04>;
+			reg-shift = <0x02>;
+			reg-io-width = <0x04>;
+			clocks = <0x02 0x28>;
+			resets = <0x02 0x31>;
+			status = "okay";
+			pinctrl-0 = <0x09>;
+			pinctrl-names = "default";
+		};
+
+		serial@01c28400 {
+			compatible = "snps,dw-apb-uart";
+			reg = <0x1c28400 0x400>;
+			interrupts = <0x00 0x01 0x04>;
+			reg-shift = <0x02>;
+			reg-io-width = <0x04>;
+			clocks = <0x02 0x29>;
+			resets = <0x02 0x32>;
+			status = "disabled";
+		};
+
+		serial@01c28800 {
+			compatible = "snps,dw-apb-uart";
+			reg = <0x1c28800 0x400>;
+			interrupts = <0x00 0x02 0x04>;
+			reg-shift = <0x02>;
+			reg-io-width = <0x04>;
+			clocks = <0x02 0x2a>;
+			resets = <0x02 0x33>;
+			status = "disabled";
+		};
+
+		i2c@01c2ac00 {
+			compatible = "allwinner,sun6i-a31-i2c";
+			reg = <0x1c2ac00 0x400>;
+			interrupts = <0x00 0x06 0x04>;
+			clocks = <0x02 0x26>;
+			resets = <0x02 0x2e>;
+			pinctrl-names = "default";
+			pinctrl-0 = <0x0a>;
+			status = "disabled";
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+		};
+
+		i2c@01c2b000 {
+			compatible = "allwinner,sun6i-a31-i2c";
+			reg = <0x1c2b000 0x400>;
+			interrupts = <0x00 0x07 0x04>;
+			clocks = <0x02 0x27>;
+			resets = <0x02 0x2f>;
+			status = "disabled";
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+		};
+
+		ethernet@1c30000 {
+			compatible = "allwinner,sun8i-h3-emac";
+			syscon = <0x0b>;
+			reg = <0x1c30000 0x104>;
+			interrupts = <0x00 0x52 0x04>;
+			interrupt-names = "macirq";
+			resets = <0x02 0x0c>;
+			reset-names = "stmmaceth";
+			clocks = <0x02 0x1a>;
+			clock-names = "stmmaceth";
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+			status = "okay";
+			phy-handle = <0x0c>;
+			phy-mode = "mii";
+			allwinner,leds-active-low;
+
+			mdio {
+				#address-cells = <0x01>;
+				#size-cells = <0x00>;
+
+				ethernet-phy@0 {
+					compatible = "ethernet-phy-ieee802.3-c22";
+					reg = <0x01>;
+					clocks = <0x02 0x2b>;
+					resets = <0x02 0x27>;
+					linux,phandle = <0x0c>;
+					phandle = <0x0c>;
+				};
+			};
+		};
+
+		interrupt-controller@01c81000 {
+			compatible = "arm,cortex-a7-gic\0arm,cortex-a15-gic";
+			reg = <0x1c81000 0x1000 0x1c82000 0x1000 0x1c84000 0x2000 0x1c86000 0x2000>;
+			interrupt-controller;
+			#interrupt-cells = <0x03>;
+			interrupts = <0x01 0x09 0xf04>;
+			linux,phandle = <0x01>;
+			phandle = <0x01>;
+		};
+	};
+
+	ahci-5v {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <0x0d>;
+		regulator-name = "ahci-5v";
+		regulator-min-microvolt = <0x4c4b40>;
+		regulator-max-microvolt = <0x4c4b40>;
+		regulator-boot-on;
+		enable-active-high;
+		gpio = <0x06 0x01 0x08 0x00>;
+		status = "disabled";
+	};
+
+	usb0-vbus {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <0x0e>;
+		regulator-name = "usb0-vbus";
+		regulator-min-microvolt = <0x4c4b40>;
+		regulator-max-microvolt = <0x4c4b40>;
+		enable-active-high;
+		gpio = <0x06 0x01 0x09 0x00>;
+		status = "disabled";
+	};
+
+	usb1-vbus {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <0x0f>;
+		regulator-name = "usb1-vbus";
+		regulator-min-microvolt = <0x4c4b40>;
+		regulator-max-microvolt = <0x4c4b40>;
+		regulator-boot-on;
+		enable-active-high;
+		gpio = <0x06 0x07 0x06 0x00>;
+		status = "disabled";
+	};
+
+	usb2-vbus {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <0x10>;
+		regulator-name = "usb2-vbus";
+		regulator-min-microvolt = <0x4c4b40>;
+		regulator-max-microvolt = <0x4c4b40>;
+		regulator-boot-on;
+		enable-active-high;
+		gpio = <0x06 0x07 0x03 0x00>;
+		status = "disabled";
+	};
+
+	vcc3v0 {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc3v0";
+		regulator-min-microvolt = <0x2dc6c0>;
+		regulator-max-microvolt = <0x2dc6c0>;
+	};
+
+	vcc3v3 {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc3v3";
+		regulator-min-microvolt = <0x325aa0>;
+		regulator-max-microvolt = <0x325aa0>;
+		linux,phandle = <0x04>;
+		phandle = <0x04>;
+	};
+
+	vcc5v0 {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc5v0";
+		regulator-min-microvolt = <0x4c4b40>;
+		regulator-max-microvolt = <0x4c4b40>;
+	};
+
+	aliases {
+		serial0 = "/soc/serial@01c28000";
+		ethernet0 = "/soc/ethernet@1c30000";
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		blue_led {
+			label = "licheepi:blue:usr";
+			gpios = <0x06 0x06 0x01 0x01>;
+		};
+
+		green_led {
+			label = "licheepi:green:usr";
+			gpios = <0x06 0x06 0x00 0x01>;
+			default-state = "on";
+		};
+
+		red_led {
+			label = "licheepi:red:usr";
+			gpios = <0x06 0x06 0x02 0x01>;
+		};
+	};
+};
