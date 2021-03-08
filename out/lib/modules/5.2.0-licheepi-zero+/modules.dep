@@ -1,4 +1,6 @@
+kernel/drivers/pinctrl/pinctrl-axp209.ko:
 kernel/drivers/video/backlight/lcd.ko:
+kernel/drivers/video/backlight/platform_lcd.ko: kernel/drivers/video/backlight/lcd.ko
 kernel/drivers/net/phy/phylink.ko:
 kernel/drivers/net/phy/mdio-bcm-unimac.ko:
 kernel/drivers/net/phy/mdio-mux.ko:
@@ -18,6 +20,7 @@ kernel/drivers/usb/class/cdc-wdm.ko:
 kernel/drivers/usb/serial/usbserial.ko:
 kernel/drivers/usb/serial/cp210x.ko: kernel/drivers/usb/serial/usbserial.ko
 kernel/drivers/usb/serial/usb-serial-simple.ko: kernel/drivers/usb/serial/usbserial.ko
+kernel/drivers/input/touchscreen/goodix.ko:
 kernel/drivers/input/mousedev.ko:
 kernel/drivers/media/i2c/msp3400.ko:
 kernel/drivers/media/i2c/saa7115.ko:
