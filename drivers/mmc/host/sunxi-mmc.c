@@ -15,6 +15,7 @@
 #include <linux/device.h>
 #include <linux/dma-mapping.h>
 #include <linux/err.h>
+#include <linux/gpio/consumer.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>
 #include <linux/kernel.h>
@@ -278,6 +279,9 @@ struct sunxi_mmc_host {
 	struct clk	*clk_mmc;
 	struct clk	*clk_sample;
 	struct clk	*clk_output;
+
+	/* gpio */
+	struct gpio_desc *enable_gpio;
 
 	/* irq */
 	spinlock_t	lock;
@@ -944,9 +948,15 @@ static void sunxi_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 {
 	struct sunxi_mmc_host *host = mmc_priv(mmc);
 
+	if (ios->power_mode == MMC_POWER_OFF)
+		sunxi_mmc_reset_host(host);
+
 	sunxi_mmc_card_power(host, ios);
 	sunxi_mmc_set_bus_width(host, ios->bus_width);
 	sunxi_mmc_set_clk(host, ios);
+
+	if (ios->power_mode == MMC_POWER_UP)
+		sunxi_mmc_init_host(host);
 }
 
 static int sunxi_mmc_volt_switch(struct mmc_host *mmc, struct mmc_ios *ios)
@@ -968,8 +978,8 @@ static void sunxi_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
 	unsigned long flags;
 	u32 imask;
 
-	if (enable)
-		pm_runtime_get_noresume(host->dev);
+	//if (enable)
+		//pm_runtime_get_noresume(host->dev);
 
 	spin_lock_irqsave(&host->lock, flags);
 
@@ -984,8 +994,8 @@ static void sunxi_mmc_enable_sdio_irq(struct mmc_host *mmc, int enable)
 	mmc_writel(host, REG_IMASK, imask);
 	spin_unlock_irqrestore(&host->lock, flags);
 
-	if (!enable)
-		pm_runtime_put_noidle(host->mmc->parent);
+	//if (!enable)
+		//pm_runtime_put_noidle(host->mmc->parent);
 }
 
 static void sunxi_mmc_hw_reset(struct mmc_host *mmc)
@@ -1174,6 +1184,13 @@ static const struct sunxi_mmc_cfg sun50i_a64_emmc_cfg = {
 	.needs_new_timings = true,
 };
 
+static const struct sunxi_mmc_cfg sun50i_h5_emmc_cfg = {
+	.idma_des_size_bits = 13,
+	.clk_delays = NULL,
+	.can_calibrate = true,
+	.needs_new_timings = false,
+};
+
 static const struct of_device_id sunxi_mmc_of_match[] = {
 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
@@ -1182,6 +1199,7 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
+	{ .compatible = "allwinner,sun50i-h5-emmc", .data = &sun50i_h5_emmc_cfg },
 	{ /* sentinel */ }
 };
 MODULE_DEVICE_TABLE(of, sunxi_mmc_of_match);
@@ -1273,6 +1291,11 @@ static int sunxi_mmc_resource_request(struct sunxi_mmc_host *host,
 	if (ret)
 		return ret;
 
+	host->enable_gpio = devm_gpiod_get_optional(&pdev->dev,
+						    "enable", GPIOD_OUT_HIGH);
+	if (IS_ERR(host->enable_gpio))
+		return PTR_ERR(host->enable_gpio);
+
 	host->reg_base = devm_ioremap_resource(&pdev->dev,
 			      platform_get_resource(pdev, IORESOURCE_MEM, 0));
 	if (IS_ERR(host->reg_base))
@@ -1333,6 +1356,7 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
 	struct mmc_host *mmc;
 	int ret;
 
+	printk("%s: Entered \n", __func__);
 	mmc = mmc_alloc_host(sizeof(struct sunxi_mmc_host), &pdev->dev);
 	if (!mmc) {
 		dev_err(&pdev->dev, "mmc alloc host failed\n");
@@ -1424,14 +1448,16 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
 	/* TODO: This driver doesn't support HS400 mode yet */
 	mmc->caps2 &= ~MMC_CAP2_HS400;
 
+	gpiod_set_value(host->enable_gpio, 1);
+
 	ret = sunxi_mmc_init_host(host);
 	if (ret)
 		goto error_free_dma;
 
-	pm_runtime_set_active(&pdev->dev);
-	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
-	pm_runtime_use_autosuspend(&pdev->dev);
-	pm_runtime_enable(&pdev->dev);
+	//pm_runtime_set_active(&pdev->dev);
+	//pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+	//pm_runtime_use_autosuspend(&pdev->dev);
+	//pm_runtime_enable(&pdev->dev);
 
 	ret = mmc_add_host(mmc);
 	if (ret)
@@ -1441,6 +1467,7 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
 		 mmc->max_req_size >> 10,
 		 host->use_new_timings ? ", uses new timings mode" : "");
 
+	printk("%s: Done \n", __func__);
 	return 0;
 
 error_free_dma:
@@ -1455,8 +1482,10 @@ static int sunxi_mmc_remove(struct platform_device *pdev)
 	struct mmc_host	*mmc = platform_get_drvdata(pdev);
 	struct sunxi_mmc_host *host = mmc_priv(mmc);
 
+	gpiod_set_value(host->enable_gpio, 0);
+
 	mmc_remove_host(mmc);
-	pm_runtime_force_suspend(&pdev->dev);
+	//pm_runtime_force_suspend(&pdev->dev);
 	disable_irq(host->irq);
 	sunxi_mmc_disable(host);
 	dma_free_coherent(&pdev->dev, PAGE_SIZE, host->sg_cpu, host->sg_dma);
@@ -1495,7 +1524,7 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
 	 * Disabling the irq  will prevent this.
 	 */
 	disable_irq(host->irq);
-	sunxi_mmc_reset_host(host);
+	//sunxi_mmc_reset_host(host);
 	sunxi_mmc_disable(host);
 
 	return 0;
@@ -1512,7 +1541,7 @@ static struct platform_driver sunxi_mmc_driver = {
 	.driver = {
 		.name	= "sunxi-mmc",
 		.of_match_table = of_match_ptr(sunxi_mmc_of_match),
-		.pm = &sunxi_mmc_pm_ops,
+		//.pm = &sunxi_mmc_pm_ops,
 	},
 	.probe		= sunxi_mmc_probe,
 	.remove		= sunxi_mmc_remove,

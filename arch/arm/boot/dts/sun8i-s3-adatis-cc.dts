@@ -9,10 +9,10 @@
 
 / {
 	model = "Command Center V2";
-	compatible = "licheepi,licheepi-zero-dock", "licheepi,licheepi-zero", "allwinner,sun8i-s3"
+	compatible = "licheepi,licheepi-zero-dock", "licheepi,licheepi-zero", "allwinner,sun8i-s3", 
 		     "allwinner,sun8i-v3s";
 
-	mmc2_pwrseq: pwrseq {
+	mmc2_pwrseq: mmc2_pwrseq {
 		compatible = "mmc-pwrseq-emmc";
 		reset-gpios = <&pio 2 2 GPIO_ACTIVE_LOW>;	// PC2
 	};
@@ -23,13 +23,16 @@
 
 	chosen {
 		stdout-path = "serial0:115200n8";
+		simplefb_lcd {
+			status = "okay";
+		};
 	};
 
     backlight: backlight {
             compatible = "pwm-backlight";
-            pwms = <&pwm 0 1000000 0>;
-            brightness-levels = <0 30 40 50 60 70 100>;
-            default-brightness-level = <6>;
+            pwms = <&pwm 0 50000 0>;
+            brightness-levels = <0 10 20 30 40 50 60 70 80 90 100>;
+            default-brightness-level = <8>;
     };
             
     panel: panel {
@@ -107,7 +110,7 @@
 	vcc-pb-supply = <&reg_vcc3v3>;							// i2s, i2c (TWI)
 	vcc-pc-supply = <&reg_vcc3v3>;							// emmc
 	vcc-pd-supply = <&reg_vcc3v3>;	// Added				// LCD
-//	vcc-pe-supply = <&reg_ldo3>;							// CSI0	
+	vcc-pe-supply = <&reg_vcc3v3>; //<&reg_ldo3>;							// CSI0	
 	vcc-pf-supply = <&reg_vcc3v3>;							// SD card
 	vcc-pg-supply = <&reg_vcc3v3>;	// Changed was &reg_ldo4
 //	vcc-ph-supply = <&reg_ldo4>;	// Added				// CSI1
@@ -117,8 +120,6 @@
 	        pins = "PB12";
 	        function = "gpio_out";
 	};
-
-
 
 // ============ TS PINS ======================
     touchscreen_pins_a: st@0 {
@@ -147,7 +148,7 @@
 
 &tcon0 {
         pinctrl-names = "default";
-        pinctrl-0 = <&lcd_rgb666_pins_a>;
+        pinctrl-0 = <&lcd_rgb666_pins_b>;
         status = "okay";
 };
         
@@ -195,7 +196,7 @@
 &i2c1 {
 	status = "okay";
 
-	gt911: touchscreen@14 {
+	gt911: touchscreen@5d {
         compatible = "goodix,gt911";
         reg = <0x5d>;
         interrupt-parent = <&pio>;
@@ -320,10 +321,15 @@
 
 &mmc2 {
 	vmmc-supply = <&reg_vcc3v3>;
-	vqmmc-supply = <&reg_vcc3v3>;
+//	vqmmc-supply = <&reg_vcc3v3>;
+	
 	bus-width = <8>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc2_pins_8bit>;
+
 	non-removable;
 	mmc-pwrseq = <&mmc2_pwrseq>;
+//	cap-mmc-highspeed;
 	status = "okay";
 
 	emmc: emmc@0 {
